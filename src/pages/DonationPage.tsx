@@ -86,8 +86,8 @@ const DonationPage = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-3xl font-serif font-bold text-ehad-primary mb-2">후원 종류 선택</h2>
-                <p className="text-gray-500">어떤 방식으로 아이들의 미래를 응원하시겠어요?</p>
+                <h2 className="text-3xl font-serif font-bold text-ehad-primary mb-3 tracking-tight">후원 종류 선택</h2>
+                <p className="text-gray-500 font-light text-lg">어떤 방식으로 아이들의 미래를 응원하시겠어요?</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -175,8 +175,8 @@ const DonationPage = () => {
               className="space-y-8"
             >
               <div className="text-center">
-                <h2 className="text-3xl font-serif font-bold text-ehad-primary mb-2">후원자 정보 입력</h2>
-                <p className="text-gray-500">소중한 나눔을 위해 정보를 확인해주세요.</p>
+                <h2 className="text-3xl font-serif font-bold text-ehad-primary mb-3 tracking-tight">후원자 정보 입력</h2>
+                <p className="text-gray-500 font-light text-lg">소중한 나눔을 위해 정보를 확인해주세요.</p>
               </div>
 
               <div className="space-y-4">
@@ -254,9 +254,9 @@ const DonationPage = () => {
               <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-8">
                 <CheckCircle2 size={48} />
               </div>
-              <h2 className="text-4xl font-serif font-bold text-ehad-primary mb-4">후원이 완료되었습니다!</h2>
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed">
-                {formData.name} 후원자님의 소중한 마음이<br />
+              <h2 className="text-4xl font-serif font-bold text-ehad-primary mb-6 tracking-tight">후원이 완료되었습니다!</h2>
+              <p className="text-xl text-gray-600 mb-12 leading-relaxed font-light">
+                <span className="font-bold text-ehad-primary">{formData.name}</span> 후원자님의 소중한 마음이<br />
                 아이들의 꿈을 키우는 씨앗이 됩니다.<br />
                 진심으로 감사드립니다.
               </p>
