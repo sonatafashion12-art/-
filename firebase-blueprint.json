@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "newsletter": {
+      "title": "Newsletter Subscription",
+      "description": "Subscribers for the ECHAD newsletter",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Subscriber's email address"
+        },
+        "subscribedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the user subscribed"
+        }
+      },
+      "required": ["email", "subscribedAt"]
+    },
+    "donations": {
+      "title": "Donation Record",
+      "description": "Records of donation intents or confirmations (if implemented)",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the donor"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Donation amount"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed"],
+          "description": "Status of the donation"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the record was created"
+        }
+      },
+      "required": ["userId", "amount", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/newsletter/{subscriberId}": {
+      "schema": "newsletter",
+      "description": "Newsletter subscribers"
+    },
+    "/donations/{donationId}": {
+      "schema": "donations",
+      "description": "Donation records"
+    }
+  }
+}

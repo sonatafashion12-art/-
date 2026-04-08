@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: newsletter
+    // Fields:
+    //   - email: string (required, email format)
+    //   - subscribedAt: timestamp (required)
+    //
+    // Collection: donations
+    // Fields:
+    //   - userId: string (required, matches auth.uid)
+    //   - amount: number (required, positive)
+    //   - status: string (required, 'pending' or 'confirmed')
+    //   - createdAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isRecent(time) {
+      return time > request.time - duration.value(5, 'm') && time < request.time + duration.value(5, 'm');
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.email == "sonatafashion12@gmail.com" && request.auth.token.email_verified == true);
+    }
+
+    // ===============================================================
+    // Validation Functions
+    // ===============================================================
+    function isValidNewsletter(data) {
+      return data.keys().hasAll(['email', 'subscribedAt']) &&
+             data.keys().hasOnly(['email', 'subscribedAt']) &&
+             isValidEmail(data.email) &&
+             data.email.size() < 256 &&
+             data.subscribedAt is timestamp;
+    }
+
+    function isValidDonation(data) {
+      return data.keys().hasAll(['userId', 'amount', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['userId', 'amount', 'status', 'createdAt']) &&
+             data.userId == request.auth.uid &&
+             data.amount is number && data.amount > 0 &&
+             data.status in ['pending', 'confirmed'] &&
+             data.createdAt is timestamp;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /newsletter/{subscriberId} {
+      // Anyone can subscribe (create), but only admin can read
+      allow create: if isValidNewsletter(request.resource.data) && isRecent(request.resource.data.subscribedAt);
+      allow read: if isAdmin();
+      allow update, delete: if isAdmin();
+    }
+
+    match /donations/{donationId} {
+      // Users can create their own donation records
+      allow create: if isAuthenticated() && isValidDonation(request.resource.data) && isRecent(request.resource.data.createdAt);
+      // Users can read their own donations, admin can read all
+      allow read: if isOwner(resource.data.userId) || isAdmin();
+      // Only admin can update status or delete
+      allow update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+    }
+  }
+}
